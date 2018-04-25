@@ -9,32 +9,26 @@ $app->get('/', function (Request $request, Response $response) {
     // Sample log message
     // $this->logger->info("Slim-Skeleton '/' route");
     // Render index view
-    $sql = "SELECT * FROM fsbld_users";
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute();
-    $result['users'] = $stmt->fetchAll();
-    $sql = "SELECT * FROM kuliah";
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute();
-    $result['matkul'] = $stmt->fetchAll();
-    return $this->renderer->render($response, 'index.phtml', $result);
+
+    return $this->renderer->render($response, 'index.phtml');
 });
 
 $app->get("/users/login/", function(Request $request, Response $response){
-    $email = $request->getQueryParam("email");
+    $user = $request->getQueryParam("user");
     $pass = $request->getQueryParam("pass");
 
-	$sql = "SELECT * FROM fsbld_users WHERE email=:email";
+	$sql = "SELECT * FROM fsbld_users WHERE username=:username OR email=:email";
     $stmt = $this->db->prepare($sql);
-    $stmt->execute([":email"=>$email]);
+    $stmt->execute([":username"=>$user,":email"=>$user]);
     $result = $stmt->fetchAll();
     if ($stmt->rowCount() > 0) {
     	if (password_verify($pass, $result[0]["password"])){
-    		$sql = "UPDATE fsbld_users SET api_key=:api_key WHERE email=:email";
+    		$sql = "UPDATE fsbld_users SET api_key=:api_key WHERE username=:username OR email=:email";
 		    $stmt = $this->db->prepare($sql);
 		    $new_api_key = bin2hex(random_bytes(32));
 		    $data = [
-		        ":email" => $email,
+                ":username"=>$user,
+                ":email"=>$user,
 		        ":api_key" => $new_api_key
 		    ];
    			if($stmt->execute($data))
@@ -51,10 +45,11 @@ $app->get("/users/login/", function(Request $request, Response $response){
 $app->post("/users/register/", function (Request $request, Response $response){
     $new_usr = $request->getParsedBody();
 
-    $sql = "INSERT INTO fsbld_users (email, password) VALUE (:email, :pass)";
+    $sql = "INSERT INTO fsbld_users (username, email, password) VALUE (:username, :email, :pass)";
     $stmt = $this->db->prepare($sql);
 
     $data = [
+        ":username" => $new_usr["username"],
         ":email" => $new_usr["email"],
         ":pass" => password_hash($new_usr["pass"], PASSWORD_BCRYPT)
     ];
@@ -69,10 +64,11 @@ $app->post("/users/register/", function (Request $request, Response $response){
 $app->put("/users/update/", function (Request $request, Response $response){
     //$email = $request->getQueryParam("email");
     $new_usr = $request->getParsedBody();
-    $sql = "UPDATE fsbld_users SET password=:pass WHERE email=:email";
+    $sql = "UPDATE fsbld_users SET email=:email, password=:pass WHERE username=:username";
     $stmt = $this->db->prepare($sql);
     
     $data = [
+        ":username" => $new_usr["username"],
         ":email" => $new_usr["email"],
         ":pass" => password_hash($new_usr["pass"], PASSWORD_BCRYPT)
     ];

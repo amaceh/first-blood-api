@@ -19,7 +19,7 @@ $app->add(function ($request, $response, $next) {
         return $response->withJson(["status" => "API Key required"], 401);
     }
     
-    $sql = "SELECT * FROM users WHERE api_key=:api_key";
+    $sql = "SELECT * FROM fsbld_users WHERE api_key=:api_key";
     $stmt = $this->db->prepare($sql);
     $stmt->execute([":api_key" => $key]);
     

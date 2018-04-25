@@ -20,7 +20,7 @@ return [
             'host' => 'localhost',
             'user' => 'root',
             'pass' => '',
-            'dbname' => 'mhs_db',
+            'dbname' => 'first_blood',
             'driver' => 'mysql'
         ],
     ],

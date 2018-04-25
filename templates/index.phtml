@@ -9,48 +9,9 @@
     </head>
     <body>
         <div class = "container">
-        <h1>Slim</h1>
-        <div>a microframework for PHP</div>
+        <h1>First Blood Service</h1>
+        <div>dengan microframework for PHP SLIM</div>
         <p>Dokumentasi <a href="http://www.slimframework.com">SlimFramework</a></p>
-        <h3>Tabel User</h3>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                    <th>Email</th>
-                    <th>Password</th>
-                    <th>Api Key</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($users as $r) { 
-                    echo "<tr>";
-                    foreach ($r as $b) { ?>
-                        <td><?php echo $b; ?></td>
-                    <?php } 
-                    echo "</tr>"; 
-                    }  ?>                       
-                </tbody>
-            </table>
-        <h3>Tabel Matkul</h3>
-        	<table class="table table-striped">
-        		<thead>
-        			<tr>
-        			<th>Kode MK</th>
-        			<th>Nama MK</th>
-        			<th>Nama Dosen MK</th>
-        			<th>Jumlah SKS</th>
-        			</tr>
-        		</thead>
-        		<tbody>
-        			<?php foreach ($matkul as $r) { 
-        			echo "<tr>";
-        			foreach ($r as $b) { ?>
-        				<td><?php echo $b; ?></td>
-        			<?php } 
-        			echo "</tr>"; 
-        			}  ?>        				
-        		</tbody>
-        	</table>
         </div>
     </body>
 </html>
