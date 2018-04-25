@@ -31,9 +31,10 @@ $app->get("/users/login/", function(Request $request, Response $response){
                 ":email"=>$user,
 		        ":api_key" => $new_api_key
 		    ];
-   			if($stmt->execute($data))
-    			return $response->withJson(["status" => "success", "data" => array("api_key"=>$new_api_key)], 200);
-			else
+   			if($stmt->execute($data)){
+                $result[0]['api_key']=$new_api_key;
+    			return $response->withJson(["status" => "success", "data" => $result[0]], 200);
+			}else
 		    	return $response->withJson(["status" => "failed", "data" => NULL], 200);
     	}else
 	    	return $response->withJson(["status" => "wrong password", "data" => NULL], 200);
@@ -45,13 +46,18 @@ $app->get("/users/login/", function(Request $request, Response $response){
 $app->post("/users/register/", function (Request $request, Response $response){
     $new_usr = $request->getParsedBody();
 
-    $sql = "INSERT INTO fsbld_users (username, email, password) VALUE (:username, :email, :pass)";
+    $sql = "INSERT INTO fsbld_users (username, email, password, nama, goldar, rhesus, no_hp, foto_profil) ";
+    $sql .= "VALUE (:username, :email, :password, :nama, :goldar, :rhesus, :no_hp, :foto_profil)";
     $stmt = $this->db->prepare($sql);
-
     $data = [
-        ":username" => $new_usr["username"],
-        ":email" => $new_usr["email"],
-        ":pass" => password_hash($new_usr["pass"], PASSWORD_BCRYPT)
+        ":username"     => $new_usr["username"],
+        ":email"        => $new_usr["email"],
+        ":password"     => password_hash($new_usr["password"], PASSWORD_BCRYPT),
+        ":nama"         => $new_usr["nama"],
+        ":goldar"       => $new_usr["goldar"],
+        ":rhesus"       => $new_usr["rhesus"],
+        ":no_hp"        => $new_usr["no_hp"],
+        ":foto_profil"  => $new_usr["foto_profil"]
     ];
 
     if($stmt->execute($data))
@@ -64,13 +70,19 @@ $app->post("/users/register/", function (Request $request, Response $response){
 $app->put("/users/update/", function (Request $request, Response $response){
     //$email = $request->getQueryParam("email");
     $new_usr = $request->getParsedBody();
-    $sql = "UPDATE fsbld_users SET email=:email, password=:pass WHERE username=:username";
+    $sql  = "UPDATE fsbld_users SET email=:email, password=:password, nama=:nama, goldar=:goldar,";
+    $sql .= "rhesus=:rhesus, no_hp=:no_hp, foto_profil=:foto_profil WHERE username=:username";
     $stmt = $this->db->prepare($sql);
     
     $data = [
-        ":username" => $new_usr["username"],
-        ":email" => $new_usr["email"],
-        ":pass" => password_hash($new_usr["pass"], PASSWORD_BCRYPT)
+        ":username"     => $new_usr["username"],
+        ":email"        => $new_usr["email"],
+        ":password"         => password_hash($new_usr["password"], PASSWORD_BCRYPT),
+        ":nama"         => $new_usr["nama"],
+        ":goldar"       => $new_usr["goldar"],
+        ":rhesus"       => $new_usr["rhesus"],
+        ":no_hp"        => $new_usr["no_hp"],
+        ":foto_profil"  => $new_usr["foto_profil"]
     ];
 
     if($stmt->execute($data))
