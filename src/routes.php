@@ -110,7 +110,8 @@ $app->get("/users/getUsers/", function(Request $request, Response $response){
 ///////////////////////////////////////////////////////////////////////////////
 
 $app->get("/posting/", function (Request $request, Response $response){
-    $sql = "SELECT * FROM posts";
+    //$sql = "SELECT * FROM fsbld_posts";
+    $sql = "SELECT B.*, A.nama, A.foto_profil FROM fsbld_users A INNER JOIN fsbld_posts B ON A.username=B.username";
     $stmt = $this->db->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll();
@@ -121,7 +122,7 @@ $app->get("/posting/latest/", function (Request $request, Response $response){
     // for syncing purpose
     //SELECT * FROM fsbld_post WHERE inserted_at > '2018-04-28 08:00:00'
     $waktu = $request->getQueryParam("time");
-    $sql = "SELECT * FROM posts WHERE inserted_at > :waktu";
+    $sql = "SELECT B.*, A.nama, A.foto_profil FROM fsbld_users A INNER JOIN fsbld_posts B ON A.username=B.username WHERE inserted_at > :waktu";
     $stmt = $this->db->prepare($sql);
     $stmt->execute([":waktu"=>$waktu]);
     //$stmt->execute();
@@ -131,7 +132,7 @@ $app->get("/posting/latest/", function (Request $request, Response $response){
 
 $app->get("/posting/{id}", function (Request $request, Response $response, $args){
     $id = $args["id"];
-    $sql = "SELECT * FROM posts WHERE id_post=:id";
+    $sql = "SELECT B.*, A.nama, A.foto_profil FROM fsbld_users A INNER JOIN fsbld_posts B ON A.username=B.username WHERE id_post=:id";
     $stmt = $this->db->prepare($sql);
     $stmt->execute([":id" => $id]);
     $result = $stmt->fetch();
@@ -140,7 +141,7 @@ $app->get("/posting/{id}", function (Request $request, Response $response, $args
 
 $app->get("/posting/search/", function (Request $request, Response $response, $args){
     $keyword = $request->getQueryParam("keyword");
-    $sql = "SELECT * FROM posts WHERE id_post LIKE '%$keyword%' OR username LIKE '%$keyword%' OR goldar LIKE '%$keyword%' OR rhesus LIKE '%$keyword%' OR descrip LIKE '%$keyword%' OR rumah_sakit LIKE '%$keyword%' OR status LIKE '%$keyword%' OR inserted_at LIKE '%$keyword%' OR updated_at LIKE '%$keyword%'";
+    $sql = "SELECT * FROM fsbld_posts WHERE id_post LIKE '%$keyword%' OR username LIKE '%$keyword%' OR goldar LIKE '%$keyword%' OR rhesus LIKE '%$keyword%' OR descrip LIKE '%$keyword%' OR rumah_sakit LIKE '%$keyword%' OR status LIKE '%$keyword%' OR inserted_at LIKE '%$keyword%' OR updated_at LIKE '%$keyword%'";
     $stmt = $this->db->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll();
@@ -152,7 +153,7 @@ $app->post("/posting/", function (Request $request, Response $response){
 
     $new_mk = $request->getParsedBody();
 
-    $sql = "INSERT INTO posts (username, goldar, rhesus, descrip, rumah_sakit, status, inserted_at, updated_at)"; 
+    $sql = "INSERT INTO fsbld_posts (username, goldar, rhesus, descrip, rumah_sakit, status, inserted_at, updated_at)"; 
     $sql .= "VALUE (:username, :goldar, :rhesus, :descrip, :rumah_sakit, :status, :inserted_at, :updated_at)";
     $stmt = $this->db->prepare($sql);
 
@@ -177,7 +178,7 @@ $app->post("/posting/", function (Request $request, Response $response){
 $app->put("/posting/{id}", function (Request $request, Response $response, $args){
     $id = $args["id"];
     $new_mk = $request->getParsedBody();
-    $sql = "UPDATE posts SET goldar=:goldar, rhesus=:rhesus, descrip=:descrip, rumah_sakit=:rumah_sakit, status=:status, updated_at=:updated_at WHERE id_post=:id";
+    $sql = "UPDATE fsbld_posts SET goldar=:goldar, rhesus=:rhesus, descrip=:descrip, rumah_sakit=:rumah_sakit, status=:status, updated_at=:updated_at WHERE id_post=:id";
     $stmt = $this->db->prepare($sql);
     
     //tidak semua attribute perlu diupdate
@@ -200,7 +201,7 @@ $app->put("/posting/{id}", function (Request $request, Response $response, $args
 
 $app->delete("/posting/{id}", function (Request $request, Response $response, $args){
     $id = $args["id"];
-    $sql = "DELETE FROM posts WHERE id_post=:id";
+    $sql = "DELETE FROM fsbld_posts WHERE id_post=:id";
     $stmt = $this->db->prepare($sql);
     
     $data = [
