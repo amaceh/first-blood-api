@@ -122,7 +122,7 @@ $app->get("/posting/latest/", function (Request $request, Response $response){
     // for syncing purpose
     //SELECT * FROM fsbld_post WHERE inserted_at > '2018-04-28 08:00:00'
     $waktu = $request->getQueryParam("time");
-    $sql = "SELECT B.*, A.nama, A.foto_profil FROM fsbld_users A INNER JOIN fsbld_posts B ON A.username=B.username WHERE inserted_at > :waktu";
+    $sql = "SELECT B.*, A.nama, A.foto_profil FROM fsbld_users A INNER JOIN fsbld_posts B ON A.username=B.username WHERE inserted_at > :waktu OR updated_at > :waktu";
     $stmt = $this->db->prepare($sql);
     $stmt->execute([":waktu"=>$waktu]);
     //$stmt->execute();
@@ -130,7 +130,7 @@ $app->get("/posting/latest/", function (Request $request, Response $response){
     return $response->withJson(["status" => "success", "data" => $result], 200);
 });
 
-$app->get("/posting/{id}", function (Request $request, Response $response, $args){
+$app->get("/posting/get/{id}/", function (Request $request, Response $response, $args){
     $id = $args["id"];
     $sql = "SELECT B.*, A.nama, A.foto_profil FROM fsbld_users A INNER JOIN fsbld_posts B ON A.username=B.username WHERE id_post=:id";
     $stmt = $this->db->prepare($sql);
@@ -175,7 +175,7 @@ $app->post("/posting/", function (Request $request, Response $response){
 });
 
 
-$app->put("/posting/{id}", function (Request $request, Response $response, $args){
+$app->put("/posting/{id}/", function (Request $request, Response $response, $args){
     $id = $args["id"];
     $new_mk = $request->getParsedBody();
     $sql = "UPDATE fsbld_posts SET goldar=:goldar, rhesus=:rhesus, descrip=:descrip, rumah_sakit=:rumah_sakit, status=:status, updated_at=:updated_at WHERE id_post=:id";
@@ -199,7 +199,7 @@ $app->put("/posting/{id}", function (Request $request, Response $response, $args
 });
 
 
-$app->delete("/posting/{id}", function (Request $request, Response $response, $args){
+$app->delete("/posting/{id}/", function (Request $request, Response $response, $args){
     $id = $args["id"];
     $sql = "DELETE FROM fsbld_posts WHERE id_post=:id";
     $stmt = $this->db->prepare($sql);
