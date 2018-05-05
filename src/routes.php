@@ -183,7 +183,7 @@ $app->put("/posting/{id}/", function (Request $request, Response $response, $arg
     
     //tidak semua attribute perlu diupdate
     $data = [
-        ":id_post" => $new_mk["id_post"],
+        ":id" => $id,
         ":goldar" => $new_mk["goldar"], 
         ":rhesus" => $new_mk["rhesus"], 
         ":descrip" => $new_mk["descrip"], 
