@@ -77,7 +77,7 @@ $app->put("/users/update/", function (Request $request, Response $response){
     $data = [
         ":username"     => $new_usr["username"],
         ":email"        => $new_usr["email"],
-        ":password"         => password_hash($new_usr["password"], PASSWORD_BCRYPT),
+        ":password"     => password_hash($new_usr["password"], PASSWORD_BCRYPT),
         ":nama"         => $new_usr["nama"],
         ":goldar"       => $new_usr["goldar"],
         ":rhesus"       => $new_usr["rhesus"],
@@ -92,14 +92,13 @@ $app->put("/users/update/", function (Request $request, Response $response){
 });
 
 $app->get("/users/getUsers/", function(Request $request, Response $response){
-    $sql = "SELECT (username, email, nama, goldar, rhesus, no_hp, foto_profil) FROM fsbld_users";
+    $sql = "SELECT username, email, nama, goldar, rhesus, no_hp, foto_profil FROM fsbld_users";
     $stmt = $this->db->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll();
     if ($stmt->rowCount() > 0) {    
-        if($stmt->execute($data)){
-            $result[0]['api_key']=$new_api_key;
-            return $response->withJson(["status" => "success", "data" => $result[0]], 200);
+        if($stmt->execute()){
+            return $response->withJson(["status" => "success", "data" => $result], 200);
         }else
             return $response->withJson(["status" => "failed", "data" => NULL], 200);
     }
