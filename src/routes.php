@@ -167,8 +167,17 @@ $app->post("/posting/", function (Request $request, Response $response){
         ":updated_at" => $new_mk["updated_at"]
     ];
 
-    if($stmt->execute($data))
-       return $response->withJson(["status" => "success", "data" => "1"], 200);
+    if($stmt->execute($data)){
+        //insert notification too
+       // var_dump($this->db->lastInsertId());
+        $sql = "INSERT INTO fsbld_notif (id_post) VALUE (:id_post)";
+        $stmt = $this->db->prepare($sql);
+        $data = [
+            ":id_post"=>$this->db->lastInsertId()
+        ];
+        $stmt->execute($data);
+        return $response->withJson(["status" => "success", "data" => "1"], 200);
+    }
     
     return $response->withJson(["status" => "failed", "data" => "0"], 200);
 });
@@ -213,3 +222,15 @@ $app->delete("/posting/{id}/", function (Request $request, Response $response, $
     return $response->withJson(["status" => "failed", "data" => "0"], 200);
 });
 
+//notification method
+$app->get("/notif/latest/", function (Request $request, Response $response){
+    // for syncing purpose
+    //SELECT * FROM fsbld_post WHERE inserted_at > '2018-04-28 08:00:00'
+    $waktu = $request->getQueryParam("time");
+    $sql = "SELECT A.* FROM fsbld_notif A , fsbld_posts B WHERE B.inserted_at > :waktu AND A.id_post=B.id_post";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([":waktu"=>$waktu]);
+    //$stmt->execute();
+    $result = $stmt->fetchAll();
+    return $response->withJson(["status" => "success", "data" => $result], 200);
+});
